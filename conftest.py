@@ -18,7 +18,7 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def connection(request):
     if request.config.getoption('--contur') == 'rnd_uat':
         con = psycopg2.connect(
@@ -26,51 +26,79 @@ def connection(request):
             user="skim_qa2_etl_srv",
             password="skim_qa2_etl_srv123",
             host="10.248.96.23",
-            port="5432"
+            port="5432",
+            options="-c statement_timeout=600s"
         )
         cur = con.cursor()
         cur.execute('set enable_nestloop to off;')
         cur.execute('set enable_mergejoin to off;')
 
-        yield cur
+        def fin():
+            cur.close()
+            con.close()
 
-        cur.close()
-        con.close()
+        request.addfinalizer(fin)
+        return cur
     elif request.config.getoption('--contur') == 'dev':
         con = psycopg2.connect(
             database="dev",
             user="skim_qa2_etl_srv",
             password="skim_qa_etl_srv123",
             host="10.248.96.23",
-            port="5432"
+            port="5432",
+            options="-c statement_timeout=600s"
         )
         cur = con.cursor()
         cur.execute('set enable_nestloop to off;')
         cur.execute('set enable_mergejoin to off;')
 
-        yield cur
+        def fin():
+            cur.close()
+            con.close()
 
-        cur.close()
-        con.close()
+        request.addfinalizer(fin)
+        return cur
     elif request.config.getoption('--contur') == 'skim':
         con = psycopg2.connect(
             database="skim",
             user="skim_qa2_etl_srv",
             password="skim_qa2_etl_srv123",
             host="10.248.96.23",
-            port="5432"
+            port="5432",
+            options="-c statement_timeout=600s"
         )
         cur = con.cursor()
         cur.execute('set enable_nestloop to off;')
         cur.execute('set enable_mergejoin to off;')
 
-        yield cur
+        def fin():
+            cur.close()
+            con.close()
 
-        cur.close()
-        con.close()
+        request.addfinalizer(fin)
+        return cur
+    elif request.config.getoption('--contur') == 'pretest':
+        con = psycopg2.connect(
+            database="pretest",
+            user="skim_qa2_etl_srv",
+            password="skim_qa2_etl_srv123",
+            host="10.248.96.23",
+            port="5432",
+            options="-c statement_timeout=600s"
+        )
+        cur = con.cursor()
+        cur.execute('set enable_nestloop to off;')
+        cur.execute('set enable_mergejoin to off;')
+
+        def fin():
+            cur.close()
+            con.close()
+
+        request.addfinalizer(fin)
+        return cur
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def dates(request):
     if request.config.getoption('--date_type') == 'inc_v2':
         dates = {
