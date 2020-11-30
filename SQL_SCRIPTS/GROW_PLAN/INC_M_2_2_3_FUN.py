@@ -99,6 +99,7 @@ select * from public.lilo_auto_qa()""")
 
 
 
+
 # -- Сравнение всех записей в таблицах
 query_2_2_3_7 = ("""create or replace function public.lilo_auto_qa() 
 	returns table(	hcode_id bpchar, hcode_name varchar(300), hcode_unit_name varchar(30), org_id int8, dor_kod int8, 
@@ -221,5 +222,6 @@ where 	calc_rule = 'growplan'
 	and date_type_id = 3
 	and dte.month_from_quater = 3
 	and clc.%s""")
+
 
 QUERYS_2_3_3 = [('query_2_2_3_4', 'query_2_2_3_5'), ('query_2_2_3_7', 'query_2_2_3_8')]
